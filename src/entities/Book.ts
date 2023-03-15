@@ -14,11 +14,11 @@ export class Book {
   publicationYear: number;
 
   @Column({ default: false })
-  isDomainPublic: boolean;
-
-  @OneToMany(() => Review, (review) => review.book)
-  reviews: Relation<Review>[];
+  inPublicDomain: boolean;
 
   @ManyToOne(() => Author, (author) => author.books)
   authors: Relation<Author>[];
+
+  @OneToMany(() => Review, (review) => review.book, { cascade: ['insert', 'update'] })
+  reviews: Relation<Review>[];
 }

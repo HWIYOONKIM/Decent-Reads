@@ -12,7 +12,7 @@ import {
   resetProfileViews,
   updateUserEmail,
 } from './controllers/UserController';
-import { addNewBook } from './controllers/BookController';
+import { addNewBook, getBook } from './controllers/BookController';
 import { addNewReview, addReviewsForBook } from './controllers/ReviewController';
 
 const app: Express = express();
@@ -41,7 +41,10 @@ app.get('/api/users', getAllUserProfiles);
 app.get('/api/users/:targetUserId', getUserProfileData);
 app.post('/api/users/:targetUserId/email', updateUserEmail);
 
+// app.post('/api/books', getBooks);
 app.post('/api/books', addNewBook);
+app.post('/api/books/:bookId', getBook);
+
 app.post('/api/books/:bookId/reviews', addNewReview);
 app.get('/api/books/:bookId/reviews', addReviewsForBook);
 app.listen(PORT, () => {

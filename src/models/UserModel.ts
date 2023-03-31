@@ -26,7 +26,11 @@ async function allUserData(): Promise<User[]> {
 }
 
 async function getUserById(userId: string): Promise<User | null> {
-  const user = await userRepository.findOne({ where: { userId } });
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where({ userId })
+    .leftJoinAndSelect('user.reviews', 'reviews')
+    .getOne();
   return user;
 }
 

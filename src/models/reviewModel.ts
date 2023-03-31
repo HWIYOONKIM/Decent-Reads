@@ -29,4 +29,22 @@ async function getAllReviews(): Promise<Review[]> {
   return await reviewRepository.find();
 }
 
-export { addReview, getReviewById, getAllReviews };
+async function deleteReviewById(reviewId: string): Promise<void> {
+  await reviewRepository
+    .createQueryBuilder('review')
+    .delete()
+    .from(Review)
+    .where('reviewId = :reviewId', { reviewId })
+    .execute();
+}
+
+async function deleteAllUserReviews(userId: string): Promise<void> {
+  await reviewRepository
+    .createQueryBuilder('review')
+    .delete()
+    .from(Review)
+    .where('user.userId = :userId', { userId })
+    .execute();
+}
+
+export { addReview, getReviewById, getAllReviews, deleteReviewById, deleteAllUserReviews };

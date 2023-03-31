@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Relation } from 'typeorm';
-import { Review } from './Review';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, Relation } from 'typeorm';
 import { Book } from './Book';
 
 @Entity()
@@ -16,9 +15,6 @@ export class Author {
   @Column({ default: false })
   isDomainPublic: boolean;
 
-  @OneToMany(() => Review, (review) => review.book)
-  reviews: Relation<Review>[];
-
-  @OneToMany(() => Book, (book) => book.authors)
+  @ManyToMany(() => Book, (book) => book.authors)
   books: Relation<Book>[];
 }

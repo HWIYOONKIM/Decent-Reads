@@ -1,32 +1,45 @@
 import { Request, Response } from 'express';
-import { getAllBooks, addBook } from '../models/BookModel';
-import { parseDatabaseError } from '../utils/db-utils';
+import { addBook, getBookById, getBooks } from '../models/BookModel';
 
-async function getBook(req: Request, res: Response): Promise<void> {
-  res.json(await getAllBooks());
-}
-
-type NewBookRequest = {
-  title: string;
-  publicationYear: number;
-};
-
-async function addNewBook(req: Request, res: Response): Promise<void> {
-  if (!req.session.isLoggedIn) {
-    res.sendStatus(401);
+async function insertBook(req: Request, res: Response): Promise<void> {
+  const { isLoggedIn } = req.session;
+  if (!isLoggedIn) {
+    // res.sendStatus(401);
+    res.redirect('/login');
     return;
   }
-  const { title, publicationYear } = req.body as NewBookRequest;
-  try {
-    // IMPORTANT: Store the `passwordHash` and NOT the plaintext password
-    const newBook = await addBook(title, publicationYear);
-    console.log(newBook);
-    res.sendStatus(201);
-  } catch (err) {
-    console.error(err);
-    const databaseErrorMessage = parseDatabaseError(err);
-    res.status(500).json(databaseErrorMessage);
-  }
+  const { title, publicationYear, inPublicDomain } = req.body as NewBookRequest;
+  console.log(`inPublicDomain: ${inPublicDomain}`);
+  console.log(`inPublicDomain after converting: ${!!inPublicDomain}`);
+
+  const book = await addBook(title, publicationYear, !!inPublicDomain);
+  // console.log(book);
+
+  // res.status(201).json(book);
+  res.redirect(`/books/${book.bookId}`);
 }
 
-export { getBook, addNewBook };
+async function getBook(req: Request, res: Response): Promise<void> {
+  const { bookId } = req.params as { bookId: string };
+
+  const book = await getBookById(bookId);
+
+  if (!book) {
+    res.sendStatus(404);
+    return;
+  }
+
+  // res.status(200).json(book);
+  res.render('bookPage', { book });
+}
+
+async function getAllBooks(req: Request, res: Response): Promise<void> {
+  // Don't send back the raw data. Instead render it with EJS
+  // res.status(200).json(await getBooks());
+
+  const books = await getBooks();
+
+  res.render('libraryPage', { books });
+}
+
+export { insertBook, getBook, getAllBooks };

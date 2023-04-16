@@ -15,8 +15,7 @@ async function insertBook(req: Request, res: Response): Promise<void> {
   const book = await addBook(title, publicationYear, !!inPublicDomain);
   // console.log(book);
 
-  // res.status(201).json(book);
-  res.redirect(`/books/${book.bookId}`);
+  res.status(201).json(book);
 }
 
 async function getBook(req: Request, res: Response): Promise<void> {

@@ -23,8 +23,6 @@ async function getBookById(bookId: string): Promise<Book | null> {
   return await bookRepository
     .createQueryBuilder('book')
     .leftJoinAndSelect('book.reviews', 'reviews')
-    .leftJoinAndSelect('reviews.user', 'user')
-    .select(['book', 'reviews', 'user.userId', 'user.email'])
     .where('bookId = :bookId', { bookId })
     .getOne();
 }
